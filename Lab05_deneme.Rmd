@@ -1,0 +1,330 @@
+---
+title: "Lab05 deneme"
+author: "Simge Çınar"
+date: "2023-10-02"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+#install.packages("httr")
+#install.packages("jsonlite")
+#install.packages("xml2")
+library(httr)
+library(jsonlite)
+library(httr)
+library(xml2)
+library(tidyverse)
+library(shiny)
+```
+
+```{r}
+year <- 2012
+round <- 100
+
+# Create the URL string with the year variable
+url <- paste0("http://ergast.com/api/f1/", year, "/", round, "/results.json")
+response <- httr::GET(url)
+
+if (http_error(response)) {
+  cat("An error occurred while fetching the URL.\n")
+} else if (http_status(response)$status_code == 200) {
+  # Fetch and parse the JSON data
+  data <- fromJSON(url)
+} else {
+  cat("The URL does not exist or is unreachable.\n")
+}
+```
+
+
+```{r}
+url2 <- "http://ergast.com/api/f1/2008/results.json?limit=10000&offset=30"
+data2 <- fromJSON(url2)
+
+data_2008 <- as.data.frame(data2$MRData)
+race_name <- data_2008$RaceTable.Races.raceName
+
+for (i in 1:length(data_2008$RaceTable.Races.Results)){
+  data_2008$RaceTable.Races.Results[[i]]$Race <- race_name[i]
+  rownames(data_2008$RaceTable.Races.Results[[i]]) <- NULL
+}
+```
+
+```{r}
+ls <- data_2008$RaceTable.Races.Results
+result_2008 <- dplyr::bind_rows(ls)
+result_2008
+```
+
+```{r}
+driver <- result_2008$Driver
+constructer <- result_2008$Constructor
+
+result_2008_new <- subset(result_2008, select = -c(Driver, Constructor, Time, FastestLap))
+
+constructer_keeps <- c("name", "nationality")
+constructer_new <- constructer[constructer_keeps]
+colnames(constructer_new)[colnames(constructer_new) == "name"] <- "Constructer"
+colnames(constructer_new)[colnames(constructer_new) == "nationality"] <- "Constructer Nationality"
+
+driver_keeps <- c("givenName","familyName", "nationality")
+driver_new <- driver[driver_keeps]
+driver_new$Driver <- paste0(driver$givenName, " ", driver$familyName)
+driver_new <- subset(driver_new, select = -c(givenName, familyName))
+colnames(driver_new)[colnames(driver_new) == "nationality"] <- "Driver Nationality"
+
+final_2008 <- cbind(result_2008_new, constructer_new, driver_new)
+
+final_2008 <- final_2008[, c("Race", "number","position", "Driver", "Driver Nationality", "points",
+"grid", "laps", "status", "Constructer", "Constructer Nationality" )]
+
+final_2008
+```
+
+```{r}
+display_result <- function(year){
+  url <- paste0("http://ergast.com/api/f1/", year, "/results.json?limit=10000&offset=30")
+  data <- fromJSON(url)
+  
+  data_year <- as.data.frame(data$MRData)
+  race_name <- data_year$RaceTable.Races.raceName
+  
+  for (i in 1:length(data_year$RaceTable.Races.Results)){
+    data_year$RaceTable.Races.Results[[i]]$race <- race_name[i]
+    rownames(data_year$RaceTable.Races.Results[[i]]) <- NULL
+  }
+  
+  ls <- data_year$RaceTable.Races.Results
+  result_year <- dplyr::bind_rows(ls)
+  
+  driver <- result_year$Driver
+  constructer <- result_year$Constructor
+  
+  result_year_new <- subset(result_year, select = -c(Driver, Constructor, Time, FastestLap))
+  
+  constructer_keeps <- c("name", "nationality")
+  constructer_new <- constructer[constructer_keeps]
+  colnames(constructer_new)[colnames(constructer_new) == "name"] <- "constructer"
+  colnames(constructer_new)[colnames(constructer_new) == "nationality"] <- "constructer nationality"
+  
+  driver_keeps <- c("givenName","familyName", "nationality")
+  driver_new <- driver[driver_keeps]
+  driver_new$driver <- paste0(driver$givenName, " ", driver$familyName)
+  driver_new <- subset(driver_new, select = -c(givenName, familyName))
+  colnames(driver_new)[colnames(driver_new) == "nationality"] <- "driver nationality"
+  
+  final_year <- cbind(result_year_new, constructer_new, driver_new)
+  final_year <- final_year[, c("race", "number","position", "driver", "driver nationality", "points",
+  "grid", "laps", "status", "constructer", "constructer nationality" )]
+  return(final_year)
+}
+
+display_result(2008)
+```
+
+```{r}
+# FILTER BASED ON YEAR AND RACE
+
+display_result <- function(year, race = NULL){
+  url <- paste0("http://ergast.com/api/f1/", year, "/results.json?limit=10000&offset=30")
+  data <- fromJSON(url)
+  
+  data_year <- as.data.frame(data$MRData)
+  race_name <- data_year$RaceTable.Races.raceName
+  
+  for (i in 1:length(data_year$RaceTable.Races.Results)){
+    data_year$RaceTable.Races.Results[[i]]$race <- race_name[i]
+    rownames(data_year$RaceTable.Races.Results[[i]]) <- NULL
+  }
+  
+  ls <- data_year$RaceTable.Races.Results
+  result_year <- dplyr::bind_rows(ls)
+  
+  driver <- result_year$Driver
+  constructer <- result_year$Constructor
+  
+  result_year_new <- subset(result_year, select = -c(Driver, Constructor, Time, FastestLap))
+  
+  constructer_keeps <- c("name", "nationality")
+  constructer_new <- constructer[constructer_keeps]
+  colnames(constructer_new)[colnames(constructer_new) == "name"] <- "constructer"
+  colnames(constructer_new)[colnames(constructer_new) == "nationality"] <- "constructer nationality"
+  
+  driver_keeps <- c("givenName","familyName", "nationality")
+  driver_new <- driver[driver_keeps]
+  driver_new$driver <- paste0(driver$givenName, " ", driver$familyName)
+  driver_new <- subset(driver_new, select = -c(givenName, familyName))
+  colnames(driver_new)[colnames(driver_new) == "nationality"] <- "driver nationality"
+  
+  final_year <- cbind(result_year_new, constructer_new, driver_new)
+  final_year <- final_year[, c("race", "number","position", "driver", "driver nationality", "points",
+  "grid", "laps", "status", "constructer", "constructer nationality" )]
+  
+  if (is.null(race)) {
+    return(final_year)
+  } else {
+    final_year <- final_year[final_year$race == race, ]
+    return(final_year)
+  }
+}
+
+display_result(2008, race = "Malaysian Grand Prix")
+```
+
+```{r}
+ui <- fluidPage(
+  titlePanel("F1 Results Viewer"),
+  sidebarLayout(
+    sidebarPanel(
+      selectInput("year", "Select Year:", choices = seq.int(2008, 2015))
+    ),
+    mainPanel(
+      tableOutput("f1_results_table")
+    )
+  )
+)
+
+server <- function(input, output) {
+  output$f1_results_table <- renderTable({
+    filtered_data <- display_result(input$year)
+    return(filtered_data)
+  })
+}
+
+shinyApp(ui = ui, server = server)
+```
+
+
+------------------------------------------
+
+
+
+```{r}
+# Define the year as a variable
+year <- 2008
+round <- 12
+
+url <- paste0("http://ergast.com/api/f1/", year, "/", round, "/results.json")
+data <- fromJSON(url)
+```
+
+
+```{r}
+l1 <- data$MRData
+result <- as.data.frame(((l1$RaceTable)$Races)$Results)
+
+driver <- result$Driver
+constructer <- result$Constructor
+result
+```
+
+
+```{r}
+result_new <- subset(result, select = -c(Driver, Constructor, Time, FastestLap))
+result_new
+```
+
+
+```{r}
+#Data from constructor
+constructer_keeps <- c("name", "nationality")
+constructer_new <- constructer[constructer_keeps]
+colnames(constructer_new)[colnames(constructer_new) == "name"] <- "Constructer"
+colnames(constructer_new)[colnames(constructer_new) == "nationality"] <- "Constructer Nationality"
+constructer_new
+```
+
+
+```{r}
+#Get the info from driver
+driver_keeps <- c("givenName","familyName", "nationality")
+driver_new <- driver[driver_keeps]
+
+driver_new$Driver <- paste0(driver$givenName, " ", driver$familyName)
+driver_new <- subset(driver_new, select = -c(givenName, familyName))
+colnames(driver_new)[colnames(driver_new) == "nationality"] <- "Driver Nationality"
+driver_new
+```
+
+```{r}
+final <- cbind(result_new, constructer_new, driver_new)
+final
+```
+
+
+```{r}
+display_result <- function(year, round){
+  url <- paste0("http://ergast.com/api/f1/", year, "/", round, "/results.json")
+  data <- fromJSON(url)
+  
+  l1 <- data$MRData
+  result <- as.data.frame(((l1$RaceTable)$Races)$Results)
+  
+  driver <- result$Driver
+  constructer <- result$Constructor
+  
+  result_new <- subset(result, select = -c(Driver, Constructor, Time, FastestLap))
+  
+  constructer_keeps <- c("name", "nationality")
+  constructer_new <- constructer[constructer_keeps]
+  colnames(constructer_new)[colnames(constructer_new) == "name"] <- "Constructer"
+  colnames(constructer_new)[colnames(constructer_new) == "nationality"] <- "Constructer Nationality"
+  
+  driver_keeps <- c("givenName","familyName", "nationality")
+  driver_new <- driver[driver_keeps]
+  driver_new$Driver <- paste0(driver$givenName, " ", driver$familyName)
+  driver_new <- subset(driver_new, select = -c(givenName, familyName))
+  colnames(driver_new)[colnames(driver_new) == "nationality"] <- "Driver Nationality"
+  
+  final <- cbind(result_new, constructer_new, driver_new)
+  
+  return(final)
+}
+
+display_result(year = 2008, round = 5)
+```
+
+
+
+```{r}
+#DISPLAY THE RESULTS 
+
+ui <- fluidPage(
+  titlePanel("F1 Results Viewer"),
+  sidebarLayout(
+    sidebarPanel(
+      selectInput("year", "Select Year:", choices = seq.int(2008, 2015))
+    ),
+    mainPanel(
+      tableOutput("f1_results_table")
+    )
+  )
+)
+
+server <- function(input, output) {
+  output$f1_results_table <- renderTable({
+    filtered_data <- display_result(input$year)
+    return(filtered_data)
+  })
+}
+
+shinyApp(ui = ui, server = server)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
