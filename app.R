@@ -12,6 +12,7 @@ library(ggplot2)
 library(jsonlite)
 
 F1_driver_df <- function(year){
+  # A function that takes in a year a return a dataframe from the driverStandings dataset
   api_reponse <- paste0("http://ergast.com/api/f1/", year, "/driverStandings.json?limit=1000")
   raw_data <- fromJSON(api_reponse)
   
@@ -54,13 +55,30 @@ F1_driver_df <- function(year){
   return(final)
 }
 
-# Define UI for application that draws a histogram
+F1_const_df <- function(year){
+  url2 <- paste0("http://ergast.com/api/f1/", year, "/constructorStandings.json?limit=10000")
+  data2 <- fromJSON(url2)
+  
+  data_2008 <- as.data.frame(data2$MRData)
+  result_2008 <- as.data.frame(data_2008$StandingsTable.StandingsLists.ConstructorStandings)
+  
+  constructor <- result_2008$Constructor
+  constructor_new <- subset(constructor, select = -c(constructorId, url))
+  
+  result_2008_new <- subset(result_2008, select = -c(position, Constructor, positionText))
+  final_2008 <- cbind(result_2008_new, constructor_new)
+  
+  final_2008 <- final_2008[, c("name", "nationality","points" ,"wins")]
+  return(final_2008)
+}
+
+# ===== User Interface ==============
 ui <- fluidPage(
   
   # Application title
-  titlePanel("F1 standings per year"),
+  titlePanel("F1 Standings per year"),
   
-  # Sidebar with a slider input for number of bins 
+  # Sidebar with a slider input for the year
   sidebarLayout(
     sidebarPanel(
       selectInput("year",
@@ -68,13 +86,12 @@ ui <- fluidPage(
                   choices = seq.int(1958, 2023),
                   selected = 2010)
     ),
-    
-    # Show a plot of the generated distribution
     mainPanel(
-      
       tabsetPanel(type = "tabs",
                   tabPanel("Driver Plot", plotOutput("driver_plot")),
-                  tabPanel("Dataset", tableOutput("table")))
+                  tabPanel("Constructor Plot", plotOutput("const_plot")),
+                  tabPanel("Driver Dataset", tableOutput("driver_table")),
+                  tabPanel("Constructor Dataset", tableOutput("const_table")))
     )
   )
 )
@@ -86,27 +103,49 @@ server <- function(input, output) {
     year <- switch(input$year)
   })
   
+  #=== Driver Plot =========================
   output$driver_plot <- renderPlot({
-    #Plot the histogram of point per driver per year
-    
     #Fetch the data
-    data <- F1_driver_df(input$year)
-    
+    data_driver <- F1_driver_df(input$year)
     
     # Create a histogram of the points per driver, colored by constructor
-    ggplot(data, aes(x = driver, y = as.numeric(points), fill = constructer)) +
+    ggplot(data_driver, aes(x = driver, y = as.numeric(points), fill = constructer)) +
       geom_bar(stat = "identity", color = "black") +
-      scale_fill_brewer(palette = "Set3") +  # Use a color palette (Set3 in this case) 
-      labs(title = "Bar Chart of Points per Driver",
+      scale_fill_brewer(palette = "Set3") +
+      labs(title = paste("Bar Chart of Points per Driver for the Year", input$year),
            x = "Driver",
            y = "Points") + 
       theme(axis.text.x = element_text(angle = 45, hjust = 1))
   })
   
-  output$table <- renderTable({
+  #=== Constructor Plot =====================
+  output$const_plot <- renderPlot({
+    #Fetch the data
+    data_const <- F1_const_df(input$year)
+    
+    # Creates a histogram of the points per driver, colored by constructor
+    ggplot(data_const, aes(x = name, y = as.numeric(points), fill = nationality)) +
+      geom_bar(stat = "identity", color = "black") +
+      scale_fill_brewer(palette = "Set3") + 
+      labs(title = paste("Bar Chart of Points per Constructor for the Year", input$year),
+           x = "Constructor",
+           y = "Points") + 
+      theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  })
+  
+  #=== Driver Dataframe Table =======================
+  output$driver_table <- renderTable({
     #Present the dataset obtained by the request in a table
-    output$table <- renderTable({
-      F1_df(input$year)
+    output$driver_table <- renderTable({
+      F1_driver_df(input$year)
+    })
+  })
+  
+  #=== Constructor Dataframe Table =======================
+  output$const_table <- renderTable({
+    #Present the dataset obtained by the request in a table
+    output$const_table <- renderTable({
+      F1_const_df(input$year)
     })
   })
 }
