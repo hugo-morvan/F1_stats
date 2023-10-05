@@ -13,21 +13,26 @@ library(shiny)
 ui <- fluidPage(
   
   # Application title
-  titlePanel("Old Faithful Geyser Data"),
+  titlePanel("F1 standings per year"),
   
   # Sidebar with a slider input for number of bins 
   sidebarLayout(
     sidebarPanel(
-      sliderInput("bins",
-                  "Number of bins:",
-                  min = 1,
-                  max = 50,
-                  value = 30)
+      sliderInput("year",
+                  "Select a Year:",
+                  value = 2008,
+                  min = 1958,
+                  max = 2023,
+                  step = 1,
+                  sep="")
     ),
     
     # Show a plot of the generated distribution
     mainPanel(
-      plotOutput("distPlot")
+      
+      tabsetPanel(type = "tabs",
+                  tabPanel("Plot", plotOutput("plot")),
+                  tabPanel("Dataset", tableOutput("table")))
     )
   )
 )
@@ -35,15 +40,19 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
   
-  output$distPlot <- renderPlot({
-    # generate bins based on input$bins from ui.R
-    x    <- faithful[, 2]
-    bins <- seq(min(x), max(x), length.out = input$bins + 1)
-    
-    # draw the histogram with the specified number of bins
-    hist(x, breaks = bins, col = 'darkgray', border = 'white',
-         xlab = 'Waiting time to next eruption (in mins)',
-         main = 'Histogram of waiting times')
+  d <- reactive({
+    year <- switch(input$year,
+                      driverStandings = driverStandings,
+                      constructorStandings = constructorStandings
+                      )
+  })
+  
+  output$plot <- renderPlot({
+    #Plot the histogram of point per driver per year
+  })
+  output$table <- renderTable({
+    #Present the dataset obtained by the request in a table
+    d()
   })
 }
 
