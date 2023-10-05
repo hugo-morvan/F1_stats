@@ -36,5 +36,6 @@ F1_df <- function(year){
   
   final_2008 <- cbind(result_2008_new, constructer_new, driver_new)
   final_2008 <- final_2008[, c("position", "points", "wins", "driver", "driver nationality", "constructer","constructer nationality")]
+  #Return a data.frame
   return(final_2008)
 }
