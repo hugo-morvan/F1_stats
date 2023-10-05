@@ -11,46 +11,47 @@ library(shiny)
 library(ggplot2)
 library(jsonlite)
 
-F1_df <- function(year){
-  url2 <- paste0("http://ergast.com/api/f1/", year, "/driverStandings.json?limit=1000")
-  data2 <- fromJSON(url2)
+F1_driver_df <- function(year){
+  api_reponse <- paste0("http://ergast.com/api/f1/", year, "/driverStandings.json?limit=1000")
+  raw_data <- fromJSON(api_reponse)
   
-  data_2008 <- as.data.frame(data2$MRData)
-  result_2008 <- as.data.frame(data_2008$StandingsTable.StandingsLists.DriverStandings)
+  reponse_data <- as.data.frame(raw_data$MRData)
+  result <- as.data.frame(reponse_data$StandingsTable.StandingsLists.DriverStandings)
   
-  driver <- result_2008$Driver
+  driver <- result$Driver
   
-  ls <- result_2008$Constructors
-  for (i in 1:length(ls)){
-    if(nrow(ls[[i]])){
-      df <- as.data.frame(ls[i])
+  constr_list <- result$Constructors
+  for (i in 1:length(constr_list)){
+    if(nrow(constr_list[[i]])){
+      df <- as.data.frame(constr_list[i])
       merged_name <- paste(df$name, collapse = '/')
       merged_nationality <- paste(df$nationality, collapse = '/')
       df['name'] <- merged_name
       df['nationality'] <- merged_nationality
-      ls[[i]] <- df[1,]
+      constr_list[[i]] <- df[1,]
     }
   }
-  constructer <- dplyr::bind_rows(ls)
+  constructer <- dplyr::bind_rows(constr_list)
   
-  result_2008_new <- subset(result_2008, select = -c(Driver, Constructors, positionText))
-  #result_2008_new
+  result_new <- subset(result, select = -c(Driver, Constructors, positionText))
   
+  #Retrieve necessary data from constructor dataframe
   constructer_keeps <- c("name", "nationality")
   constructer_new <- constructer[constructer_keeps]
   colnames(constructer_new)[colnames(constructer_new) == "name"] <- "constructer"
   colnames(constructer_new)[colnames(constructer_new) == "nationality"] <- "constructer nationality"
   
+  #Retrieve necessary data from driver dataframe
   driver_keeps <- c("givenName","familyName", "nationality")
   driver_new <- driver[driver_keeps]
   driver_new$driver <- paste0(driver$givenName, " ", driver$familyName)
   driver_new <- subset(driver_new, select = -c(givenName, familyName))
   colnames(driver_new)[colnames(driver_new) == "nationality"] <- "driver nationality"
   
-  final_2008 <- cbind(result_2008_new, constructer_new, driver_new)
-  final_2008 <- final_2008[, c("position", "points", "wins", "driver", "driver nationality", "constructer","constructer nationality")]
+  final <- cbind(result_new, constructer_new, driver_new)
+  final <- final[, c("position", "points", "wins", "driver", "driver nationality", "constructer","constructer nationality")]
   #Return a data.frame
-  return(final_2008)
+  return(final)
 }
 
 # Define UI for application that draws a histogram
@@ -62,20 +63,17 @@ ui <- fluidPage(
   # Sidebar with a slider input for number of bins 
   sidebarLayout(
     sidebarPanel(
-      sliderInput("year",
+      selectInput("year",
                   "Select a Year:",
-                  value = 2008,
-                  min = 1958,
-                  max = 2023,
-                  step = 1,
-                  sep="")
+                  choices = seq.int(1958, 2023),
+                  selected = 2010)
     ),
     
     # Show a plot of the generated distribution
     mainPanel(
       
       tabsetPanel(type = "tabs",
-                  tabPanel("Plot", plotOutput("plot")),
+                  tabPanel("Driver Plot", plotOutput("driver_plot")),
                   tabPanel("Dataset", tableOutput("table")))
     )
   )
@@ -88,23 +86,23 @@ server <- function(input, output) {
     year <- switch(input$year)
   })
   
-  output$plot <- renderPlot({
+  output$driver_plot <- renderPlot({
     #Plot the histogram of point per driver per year
     
+    #Fetch the data
+    data <- F1_driver_df(input$year)
     
-    # Sample data (replace this with your actual data)
-    data <- F1_df(input$year)
     
-    # Create a histogram
-    ggplot(data, aes(x = driver, y = points, fill = constructer)) +
+    # Create a histogram of the points per driver, colored by constructor
+    ggplot(data, aes(x = driver, y = as.numeric(points), fill = constructer)) +
       geom_bar(stat = "identity", color = "black") +
-      scale_fill_brewer(palette = "Set3") + 
+      scale_fill_brewer(palette = "Set3") +  # Use a color palette (Set3 in this case) 
       labs(title = "Bar Chart of Points per Driver",
            x = "Driver",
            y = "Points") + 
       theme(axis.text.x = element_text(angle = 45, hjust = 1))
-    
   })
+  
   output$table <- renderTable({
     #Present the dataset obtained by the request in a table
     output$table <- renderTable({
