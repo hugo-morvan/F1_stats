@@ -8,6 +8,7 @@
 #
 
 library(shiny)
+library(ggplot2)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -49,6 +50,23 @@ server <- function(input, output) {
   
   output$plot <- renderPlot({
     #Plot the histogram of point per driver per year
+    
+    
+    # Sample data (replace this with your actual data)
+    data <- data.frame(
+      Driver = c("Driver A", "Driver B", "Driver C", "Driver D", "Driver E"),
+      Points = c(10, 15, 8, 12, 20),
+      Constructor = c("Team X", "Team Y", "Team X", "Team Z", "Team Z")
+    )
+    
+    # Create a histogram
+    ggplot(data, aes(x = Driver, y = Points, fill = Constructor)) +
+      geom_bar(stat = "identity", color = "black") +
+      scale_fill_brewer(palette = "Set3") + 
+      labs(title = "Bar Chart of Points per Driver",
+           x = "Driver",
+           y = "Points")
+    
   })
   output$table <- renderTable({
     #Present the dataset obtained by the request in a table
