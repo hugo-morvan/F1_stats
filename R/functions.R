@@ -1,14 +1,7 @@
 library(jsonlite)
 library(dplyr)
 
-#' Get the data from driver API
-#' This function gets the row data for a specific year and returns a list
-#'
-#' @param year Numeric input.
-#' @return A list with length 1
-#' @examples
-#' driver_API(2005)
-#' @export
+#This function gets the row data for a specific year and returns a list
 driver_API <- function(year){
   if (year > 2023 | year < 1958){
     stop('Year should be between 1958 and 2023!')
@@ -21,16 +14,7 @@ driver_API <- function(year){
   return(raw_data)
 }
 
-
-#' Convert list to desired dataframe
-#'
-#' Returns the F1 statistics for a single year
-#'
-#' @param year Numeric input.
-#' @return A dataframe
-#' @examples
-#' F1_driver_df(2005)
-#' @export
+# Returns the F1 statistics for a single year
 F1_driver_df <- function(year){
   
   raw_data <- driver_API(year)
