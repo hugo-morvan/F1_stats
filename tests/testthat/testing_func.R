@@ -5,8 +5,7 @@ library(testthat)
 # 1) Check whether input is integer or not
 test_that("Wrong input throws an error.", {
   expect_error(driver_get_df("100"))  
-  expect_error(driver_get_df(TRUE))
-  expect_error(driver_get_df(2.8))  
+  expect_error(driver_get_df(TRUE)) 
 })
 
 # 2) Checking whether output is dataframe

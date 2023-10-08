@@ -4,12 +4,13 @@ library(jsonlite)
 driver_API <- function(year){
   #This function gets the raw data from the driverStandings API for a specific year and returns a list
   api_reponse <- paste0("http://ergast.com/api/f1/", year, "/driverStandings.json?limit=1000")
-  raw_data <- fromJSON(api_reponse)
+  raw_data <- jsonlite::fromJSON(api_reponse)
   return(raw_data) #returns a list
 }
 
 driver_get_df <- function(year){
   # This function fetches the information from the driver_API() function and converts it into a data.frame
+  stopifnot(is.numeric(year))
   # Returns the F1 statistics for a single year
   raw_data <- driver_API(year)
   reponse_data <- as.data.frame(raw_data$MRData)
@@ -104,12 +105,14 @@ driver_winner_period <- function(from, to) {
 const_API <- function(year){
   # This function gets the raw data from the constructorStandings API for a specific year and returns a list
   api_reponse <- paste0("http://ergast.com/api/f1/", year, "/constructorStandings.json?limit=10000")
-  raw_data <- fromJSON(api_reponse)
+  raw_data <- jsonlite::fromJSON(api_reponse)
   return(raw_data) #returns a list
 }
 
 const_get_df <- function(year){
   # This function fetches the information from the const_API() function and converts it into a data.frame
+  stopifnot(is.numeric(year))
+  
   data2 <- const_API(year)
   data_2008 <- as.data.frame(data2$MRData)
   result_2008 <- as.data.frame(data_2008$StandingsTable.StandingsLists.ConstructorStandings)

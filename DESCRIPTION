@@ -5,14 +5,16 @@ Version: 1.0
 Date: 2023-10-10
 Author: Simge Cinar, Hugo Morvan
 Maintainer: Simge Cinar <simci637@student.liu.se>, Hugo Morvan <hugmo418@student.liu.se>
-Description: More about what it does (maybe more than one line)
-License: License: Apache Licence 2.0 | file LICENSE
+Description: This package contains a Shiny App to Visualize data extracted from the Erngast API, as well as helper function to do so.
+License: Apache License (== 2.0) | file LICENSE
 Suggests: 
     knitr,
     rmarkdown,
-    testthat (>= 4.0.0),
-    shiny,
+    testthat (>= 4.0.0)
+Imports:
     ggplot2,
-    jsonlite
+    shiny,
+    jsonlite,
+    dplyr
 Depends: 
     R (>= 3.5.0)
