@@ -1,5 +1,4 @@
 library(jsonlite)
-#library(dplyr)
 
 #This function gets the row data for a specific year and returns a list
 driver_API <- function(year){
@@ -11,7 +10,7 @@ driver_API <- function(year){
   }
   api_reponse <- paste0("http://ergast.com/api/f1/", year, "/driverStandings.json?limit=1000")
   raw_data <- fromJSON(api_reponse)
-  return(raw_data)
+  return(raw_data) #returns a list
 }
 
 # Returns the F1 statistics for a single year
@@ -101,7 +100,7 @@ const_API <- function(year){
   }
   api_reponse <- paste0("http://ergast.com/api/f1/", year, "/constructorStandings.json?limit=10000")
   raw_data <- fromJSON(api_reponse)
-  return(raw_data)
+  return(raw_data) #returns a list
 }
 
 # Return the list from the raw data to desired dataframe format
@@ -117,7 +116,7 @@ F1_const_df <- function(year){
   final_2008 <- cbind(result_2008_new, constructor_new)
   final_2008$year <- year
   final_2008 <- final_2008[, c("year","name", "nationality","points" ,"wins")]
-  return(final_2008)
+  return(final_2008) #returns a dataframe
 }
 
 # Find the constructer who won most race in the given year
