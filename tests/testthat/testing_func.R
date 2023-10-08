@@ -1,5 +1,6 @@
 library(testthat)
-context('function')
+#context('function')
+#source("functions.R")
 
 # 1) Check whether input is integer or not
 test_that("Wrong input throws an error.", {
@@ -71,9 +72,9 @@ test_that("winner_const() method works", {
 
 # 10) check the winner constructer for year interval
 test_that("winner_const_interval() method works", {
-  expect_output(winner_const_interval(2010, 2015), "Red Bull constructer has the highest number of wins with 44 wins in total between years 2010 and 2015")
-  expect_output(winner_const_interval(1960, 1980), "Ferrari constructer has the highest number of wins with 50 wins in total between years 1960 and 1980")
-  expect_output(winner_const_interval(2020, 2023), "Red Bull constructer has the highest number of wins with 45 wins in total between years 2020 and 2023")
+  expect_output(winner_const_interval(2010, 2015), "Red Bull constructor has the highest number of wins with 44 wins in total between years 2010 and 2015")
+  expect_output(winner_const_interval(1960, 1980), "Ferrari constructor has the highest number of wins with 50 wins in total between years 1960 and 1980")
+  expect_output(winner_const_interval(2020, 2023), "Red Bull constructor has the highest number of wins with 45 wins in total between years 2020 and 2023")
 })
 
 # 11) ??

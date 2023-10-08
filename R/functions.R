@@ -1,5 +1,5 @@
 library(jsonlite)
-library(dplyr)
+#library(dplyr)
 
 #This function gets the row data for a specific year and returns a list
 driver_API <- function(year){
@@ -20,9 +20,7 @@ F1_driver_df <- function(year){
   raw_data <- driver_API(year)
   reponse_data <- as.data.frame(raw_data$MRData)
   result <- as.data.frame(reponse_data$StandingsTable.StandingsLists.DriverStandings)
-  
   driver <- result$Driver
-  
   constr_list <- result$Constructors
   for (i in 1:length(constr_list)){
     if(nrow(constr_list[[i]])){
@@ -77,15 +75,18 @@ driver_btw_years <- function(from,to){
 }
 
 # Gives the driver with most win in a given interval
-winner_driver_interval <- function(from, to){
+winner_driver_interval <- function(from, to) {
   data <- driver_btw_years(from, to)
   data$wins <- as.numeric(data$wins)
   
-  result_df <- data %>%
-    group_by(driver) %>%
-    summarise(total_wins = sum(wins)) %>%
-    arrange(desc(total_wins))
-  cat(result_df$driver[1], "has the highest number of wins with", result_df$total_wins[1], "wins in total between years", from, "and", to)
+  # Calculate total wins per driver
+  total_wins <- aggregate(wins ~ driver, data, sum)
+  
+  # Sort the data by total wins in descending order
+  total_wins <- total_wins[order(-total_wins$wins), ]
+  
+  # Print the result
+  cat(total_wins$driver[1], "has the highest number of wins with", total_wins$wins[1], "wins in total between years", from, "and", to)
 }
 
 #------------------------------
@@ -138,16 +139,21 @@ const_btw_years <- function(from,to){
 }
 
 # Gives the highest number of wins with its constructer
-winner_const_interval <- function(from, to){
+winner_const_interval <- function(from, to) {
   data <- const_btw_years(from, to)
   data$wins <- as.numeric(data$wins)
   
-  result_df <- data %>%
-    group_by(name) %>%
-    summarise(total_wins = sum(wins)) %>%
-    arrange(desc(total_wins))
-  cat(result_df$name[1], "constructer has the highest number of wins with", result_df$total_wins[1], "wins in total between years", from, "and", to)
+  # Calculate total wins per constructor
+  total_wins <- aggregate(wins ~ name, data, sum)
+  
+  # Sort the data by total wins in descending order
+  total_wins <- total_wins[order(-total_wins$wins), ]
+  
+  # Print the result
+  cat(total_wins$name[1], "constructor has the highest number of wins with", total_wins$wins[1], "wins in total between years", from, "and", to)
 }
+
+
 
 
 
