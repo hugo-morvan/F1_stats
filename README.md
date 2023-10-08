@@ -46,3 +46,9 @@ To install and use this package, you can follow these steps:
    library(F1_stats)
    ```
    After loading the package, you can use its functions and features in your R environment.
+
+## Usage
+To run the shiny app, simply run the following commands :
+```R
+runGitHub("F1_stats", "hugo-morvan", subdir = "R/")
+```
