@@ -10,7 +10,7 @@ License: Apache License (== 2.0) | file LICENSE
 Suggests: 
     knitr,
     rmarkdown,
-    testthat (>= 4.0.0)
+    testthat (>= 3.0.0)
 Imports:
     ggplot2,
     shiny,
