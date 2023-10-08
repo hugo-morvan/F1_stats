@@ -2,12 +2,7 @@ library(jsonlite)
 
 #This function gets the row data for a specific year and returns a list
 driver_API <- function(year){
-  if (year > 2023 | year < 1958){
-    stop('Year should be between 1958 and 2023!')
-  }
-  if (year%%1!=0){
-    stop('Year should be integer')
-  }
+ 
   api_reponse <- paste0("http://ergast.com/api/f1/", year, "/driverStandings.json?limit=1000")
   raw_data <- fromJSON(api_reponse)
   return(raw_data) #returns a list
@@ -60,7 +55,9 @@ winner_driver <- function(year){
   df_driver <- F1_driver_df(year)
   max_win <- df_driver[which.max(df_driver$wins), ]
   max_point <- df_driver[which.max(df_driver$points), ]
+  dt <- c(max_win$driver, max_win$wins, max_win$points)
   cat(max_win$driver, "won the most race which is", max_win$wins, "races with", max_win$points, "points in",max_win$year)
+  return(dt)
 }
 
 # Returns the statistics between years
@@ -84,20 +81,16 @@ winner_driver_interval <- function(from, to) {
   # Sort the data by total wins in descending order
   total_wins <- total_wins[order(-total_wins$wins), ]
   
+  tot_win_driv <-  c(total_wins$driver[1],total_wins$wins[1])
   # Print the result
   cat(total_wins$driver[1], "has the highest number of wins with", total_wins$wins[1], "wins in total between years", from, "and", to)
+  return(tot_win_driv)
 }
 
 #------------------------------
 
 # This function gets the row data for a specific year and returns a list
 const_API <- function(year){
-  if (year > 2023 | year < 1958){
-    stop('Year should be between 1958 and 2023!')
-  }
-  if (year%%1!=0){
-    stop('Year should be integer')
-  }
   api_reponse <- paste0("http://ergast.com/api/f1/", year, "/constructorStandings.json?limit=10000")
   raw_data <- fromJSON(api_reponse)
   return(raw_data) #returns a list
@@ -125,6 +118,9 @@ winner_const <- function(year){
   max_win <- df_const[which.max(df_const$wins), ]
   max_point <- df_const[which.max(df_const$points), ]
   cat(max_win$name, "constructer won the most race which is", max_win$wins, "races with", max_win$points, "points in",max_win$year)
+  
+  ct <- c(max_win$name, max_win$wins, max_win$points)
+  return(ct)
 }
 
 # Gives the data for a year interval
@@ -149,7 +145,9 @@ winner_const_interval <- function(from, to) {
   total_wins <- total_wins[order(-total_wins$wins), ]
   
   # Print the result
+  tot_win <-  c(total_wins$name[1],total_wins$wins[1])
   cat(total_wins$name[1], "constructor has the highest number of wins with", total_wins$wins[1], "wins in total between years", from, "and", to)
+  return(tot_win)
 }
 
 
