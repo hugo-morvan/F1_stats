@@ -43,12 +43,20 @@ To install and use this package, you can follow these steps:
 4. **Load the Installed Package:**
   Once the installation is complete, load the package into your R session:
    ```R
-   library(F1_stats)
+   library("F1_stats")
    ```
    After loading the package, you can use its functions and features in your R environment.
 
 ## Usage
-To run the shiny app, simply run the following commands :
-```R
-runGitHub("F1_stats", "hugo-morvan", subdir = "R/")
-```
+1. **Load and Install Shiny**
+   Ensure that the package shiny is installed and loaded:
+   ```R
+   library("shiny")
+   ```
+2. **Launch the Shiny App**
+  To run the shiny app, simply run the following commands :
+  ```R
+  runGitHub("F1_stats", "hugo-morvan", subdir = "R/")
+  ```
+3. **Explore the Dataset !**
+   The app contains F1 driver and constructor standings since 1958. Have fun exploring its content !
