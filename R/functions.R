@@ -126,7 +126,7 @@ const_get_df <- function(year){
 
 const_winner <- function(year){
   # Find the Constructor who won the most races in the given year
-  df_const <- F1_const_df(year)
+  df_const <- const_get_df(year)
   max_win <- df_const[which.max(df_const$wins), ]
   max_point <- df_const[which.max(df_const$points), ]
   
@@ -140,9 +140,9 @@ const_winner <- function(year){
 
 const_btw_years <- function(from,to){
   # This function creates and return a data.frame for the constructorStandings API for the years between 'from' and 'to'
-  df <- F1_const_df(from)
+  df <- const_get_df(from)
   for (x in (from+1):to) {
-    new_year <- F1_const_df(x)
+    new_year <- const_get_df(x)
     df <- rbind(df, new_year )
   }
   #Return the combined data.frame

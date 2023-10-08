@@ -1,9 +1,18 @@
 Package: F1
 Type: Package
-Title: What the package does (short line)
+Title: F1 Interactive Results
 Version: 1.0
-Date: 2023-10-04
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
+Date: 2023-10-10
+Author: Simge Cinar, Hugo Morvan
+Maintainer: Simge Cinar <simci637@student.liu.se>, Hugo Morvan <hugmo418@student.liu.se>
 Description: More about what it does (maybe more than one line)
-License: What license is it under?
+License: License: Apache Licence 2.0 | file LICENSE
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat (>= 4.0.0),
+    shiny,
+    ggplot2,
+    jsonlite
+Depends: 
+    R (>= 3.5.0)
