@@ -1,6 +1,5 @@
 library(testthat)
-#source("your_script.R")
-#context('function')
+context('function')
 
 # 1) Check whether input is integer or not
 test_that("Wrong input throws an error.", {
