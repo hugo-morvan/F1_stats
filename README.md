@@ -13,7 +13,7 @@ This R package contains a Shiny app to visualize F1 results since the year 1958 
 ## Authors
 
 - [@hugo-morvan](https://www.github.com/hugo-morvan)
-- [@simgeecnr](https://www.github.com/imgeecnr)
+- [@simgeecnr](https://www.github.com/simgeecnr)
 
 
 ## Installation
@@ -43,6 +43,6 @@ To install and use this package, you can follow these steps:
 4. **Load the Installed Package:**
   Once the installation is complete, load the package into your R session:
    ```R
-   library(F1-stats)
+   library(F1_stats)
    ```
    After loading the package, you can use its functions and features in your R environment.
