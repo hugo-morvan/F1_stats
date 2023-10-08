@@ -48,12 +48,12 @@ To install and use this package, you can follow these steps:
    After loading the package, you can use its functions and features in your R environment.
 
 ## Usage
-1. **Load and Install Shiny**
+1. **Load and Install Shiny:**
    Ensure that the package shiny is installed and loaded:
    ```R
    library("shiny")
    ```
-2. **Launch the Shiny App**
+2. **Launch the Shiny App:**
   To run the shiny app, simply run the following commands :
   ```R
   runGitHub("F1_stats", "hugo-morvan", subdir = "R/")
