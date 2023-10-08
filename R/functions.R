@@ -10,7 +10,6 @@ driver_API <- function(year){
 
 driver_get_df <- function(year){
   # This function fetches the information from the driver_API() function and converts it into a data.frame
-  stopifnot(is.numeric(year))
   # Returns the F1 statistics for a single year
   raw_data <- driver_API(year)
   reponse_data <- as.data.frame(raw_data$MRData)
@@ -111,8 +110,6 @@ const_API <- function(year){
 
 const_get_df <- function(year){
   # This function fetches the information from the const_API() function and converts it into a data.frame
-  stopifnot(is.numeric(year))
-  
   data2 <- const_API(year)
   data_2008 <- as.data.frame(data2$MRData)
   result_2008 <- as.data.frame(data_2008$StandingsTable.StandingsLists.ConstructorStandings)
