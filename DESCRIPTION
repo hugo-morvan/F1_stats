@@ -16,5 +16,7 @@ Imports:
     shiny,
     jsonlite,
     dplyr
+VignetteBuilder: knitr
+VignetteEngine: knitr::rmarkdown
 Depends: 
     R (>= 3.5.0)
