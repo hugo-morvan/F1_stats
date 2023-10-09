@@ -23,6 +23,8 @@ setwd("..")
 source("R/functions.R")
 ```
 
+Note that I used invisible() function while calling some function to preventing the getting the duplicate output
+
 ## Driver API functions
 
 This functions returns the data as a list from the API
@@ -37,7 +39,7 @@ driver_get_df(2012)
 
 This function returns the driver who won most races in that year, their number of wins and their number of points 
 ```{r}
-driver_winner(2012)
+invisible(driver_winner(2012))
 ```
 
 This function creates and return a data.frame for the driverStandings API for the years between 'from' and 'to'
@@ -47,7 +49,7 @@ driver_btw_years(2012, 2015)
 
 Gives the driver with the most wins during a given period [from-to]
 ```{r}
-driver_winner_period(2012, 2015)
+invisible(driver_winner_period(2012, 2015))
 ```
 
 
@@ -65,7 +67,7 @@ const_get_df(2016)
 
 Find the Constructor who won the most races in the given year
 ```{r}
-const_winner(2014)
+invisible(const_winner(2014))
 ```
 
 This function creates and return a data.frame for the constructorStandings API for the years between 'from' and 'to'
@@ -75,8 +77,9 @@ const_btw_years(2013,2015)
 
 Gives the constructor with the most wins during a given period [from-to]
 ```{r}
-const_winner_period(2010,2012)
+invisible(const_winner_period(2010,2012))
 ```
+
 
 
 
