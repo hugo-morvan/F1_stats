@@ -1,5 +1,7 @@
 library(jsonlite)
 
+# TO BE DELETED
+
 #=== Driver API Functions ===========
 driver_API <- function(year){
   #This function gets the raw data from the driverStandings API for a specific year and returns a list
