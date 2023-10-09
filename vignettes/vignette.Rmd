@@ -16,19 +16,67 @@ knitr::opts_chunk$set(
 )
 ```
 
+
+Calling the necessary functions
 ```{r}
-devtools::install_github("hugo-morvan/F1_stats")
+setwd("..")  
+source("R/functions.R")
+```
+
+## Driver API functions
+
+This functions returns the data as a list from the API
+```{r}
+driver_API(2012)
+```
+
+This function takes the list from the function driver_API, convert that list to a dataframe and select the columns which are necessart
+```{r}
+driver_get_df(2012)
+```
+
+This function returns the driver who won most races in that year, their number of wins and their number of points 
+```{r}
+driver_winner(2012)
+```
+
+This function creates and return a data.frame for the driverStandings API for the years between 'from' and 'to'
+```{r}
+driver_btw_years(2012, 2015)
+```
+
+Gives the driver with the most wins during a given period [from-to]
+```{r}
+driver_winner_period(2012, 2015)
 ```
 
 
-```{r}
+## Constructor API Functions
 
+This function gets the raw data from the constructorStandings API for a specific year and returns a list
+```{r}
+const_API(2016)
 ```
 
+This function fetches the information from the const_API() function and converts it into a data.frame
 ```{r}
-
+const_get_df(2016)
 ```
+
+Find the Constructor who won the most races in the given year
 ```{r}
-
+const_winner(2014)
 ```
+
+This function creates and return a data.frame for the constructorStandings API for the years between 'from' and 'to'
+```{r}
+const_btw_years(2013,2015)
+```
+
+Gives the constructor with the most wins during a given period [from-to]
+```{r}
+const_winner_period(2010,2012)
+```
+
+
 
